@@ -1,0 +1,89 @@
+/* IMPORT the Holidays Dataset linked on Canvas */
+
+// ---------------------------- Global Variables ----------------------//
+
+var imgCheck = displayImagesHolidays();
+
+//lists :D
+var fall = [];
+var winter = [];
+var spring = [];
+var summer = [];
+
+// --------------------------------onEvents------------------------//
+//click the red handle button 
+// determine win/lose/grand prize
+onEvent("handle", "click", function() {
+  var winLose;
+  imgCheck = displayImagesHolidays();
+  checkWinLose();
+  if(checkWinLose() === true) {
+    if(imgCheck[0] == imgCheck[1] && imgCheck[0] == imgCheck[2]) {
+      winLose = "Grand Prize!";
+    } else {
+      winLose = "You win!";
+    }
+  } else {
+    winLose = "You lose!";
+  }
+  setText("winLoseOutput", winLose);
+});
+
+// -------------------------------Functions------------------------//
+
+
+// this function determines if the user has won or lost
+// s {string} - represents the season chosen by the user
+// return {boolean} - returns true if the user chosen season matches the season of all 3 holdiays
+//    and false otherwise
+function checkWinLose(s, winLose) {
+  s = getText("seasonDropdown");
+  if(s == imgCheck[0] && s == imgCheck[1] && s == imgCheck[2]) {
+    winLose = true;
+  } else {
+    winLose = false;
+  }
+  return winLose;
+}
+
+// maps each holiday to a season of the year using its month
+// Fall - Sept, Oct, Nov
+// Winter - Dec, Jan, Feb
+// Spring - March, April, May
+// Summer - June, July, Aug
+// return {list} - returns a list of seasons
+function mapToSeason() {
+  var holiday = getColumn("Holidays", "Holiday");
+  var month = getColumn("Holidays", "Month");
+  for(var i = 0; i < holiday.length; i++) {
+    if(month[i] == "September" || month[i] == "October" || month[i] == "November") {
+      fall.push(holiday[i]);
+    } else if(month[i] == "December" || month[i] == "January" || month[i] == "February") {
+      winter.push(holiday[i]);
+    } else if(month[i] == "March" || month[i] == "April" || month[i] == "May") {
+      spring.push(holiday[i]);
+    } else {
+      summer.push(holiday[i]);
+    }
+  }
+}
+
+
+// updates the screen setting a random pic to each slot
+// must use a for loop to update the image elements
+// return {list} - returns a list of the seasons of each pic shown on screen
+function displayImagesHolidays(img, image, random) {
+  img = getColumn("Holidays", "ImageURL");
+  var seasonsList = [];
+  mapToSeason();
+  for(var i = 0; i < 3; i++) {
+    random = randomNumber(1, img.length - 1);
+    image = img[random];
+    seasonsList.push(image);
+  }
+  setImageURL("image0", seasonsList[0]);
+  setImageURL("image1", seasonsList[1]);
+  setImageURL("image2", seasonsList[2]);
+  
+   return seasonsList;
+}
